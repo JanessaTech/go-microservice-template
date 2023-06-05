@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/hi-supergirl/go-microservice-template/controllers"
+	"github.com/hi-supergirl/go-microservice-template/handlers"
 	"github.com/hi-supergirl/go-microservice-template/logging"
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxevent"
@@ -57,13 +57,13 @@ func StartApplication(configFile string) {
 		}),
 		fx.Provide(
 			Server,
-			controllers.NewAccountHandler,
-			controllers.NewProductHandler,
+			handlers.NewAccountHandler,
+			handlers.NewProductController,
 		),
 		fx.Invoke(
 			func(*gin.Engine) {},
-			controllers.Route1,
-			controllers.Route2,
+			handlers.AccountRoute,
+			handlers.ProductRoute,
 		),
 	)
 	app.Run()

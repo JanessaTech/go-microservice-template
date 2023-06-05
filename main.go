@@ -55,6 +55,7 @@ func init() {
 // 5. https://github.com/hi-supergirl/go-micro-service-example/tree/master/dive-zapSugaredLogger
 // 6. https://github.com/hi-supergirl/go-practices/tree/master/syncDemo
 // 7. https://github.com/hi-supergirl/go-learning-fx/tree/master/callOrder
+// 8. https://github.com/hi-supergirl/go-learning-gin/tree/master/loginlogout/jwtDemo
 func main() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Fprintf(os.Stderr, "Whoops. There was an error while executing your CLI '%s'", err)
