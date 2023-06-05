@@ -53,11 +53,21 @@ func Server(lc fx.Lifecycle, logger *zap.Logger) *gin.Engine {
 	return r
 }
 
+func printBanner(logger *zap.Logger) {
+	logger.Sugar().Infoln(`
+****************************************************************
+****************************************************************
+***************JanessaTech's micorservice template**************
+****************************************************************
+****************************************************************`)
+}
+
 func StartApplication(configFile string) {
 	var isDevMode = true
 
 	app := fx.New(
 		fx.Supply(logging.GetLogger(isDevMode)),
+		fx.Invoke(printBanner),
 		fx.WithLogger(func(logger *zap.Logger) fxevent.Logger {
 			return &fxevent.ZapLogger{Logger: logger.Named("JanessaTech Template")}
 		}),
