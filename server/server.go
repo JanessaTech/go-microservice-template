@@ -13,25 +13,8 @@ import (
 	"go.uber.org/zap"
 )
 
-func addGroup(r *gin.Engine) {
-	api := r.Group("/api")
-	{
-		admin := api.Group("/admin")
-		{
-			admin.GET("/hello", adminFuc)
-		}
-
-	}
-}
-
-func adminFuc(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"msg": "hello admin"})
-
-}
-
 func Server(lc fx.Lifecycle, logger *zap.Logger) *gin.Engine {
 	r := gin.Default()
-	//addGroup(r)
 
 	srv := &http.Server{Addr: ":8080", Handler: r} // define a web server
 	lc.Append(fx.Hook{
