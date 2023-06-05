@@ -13,10 +13,10 @@ func NewProductController() *ProductHandler {
 }
 
 func (pc *ProductHandler) GetAll(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"ProductController": "GetAll"})
+	c.JSON(http.StatusOK, gin.H{"ProductHandler": "GetAll"})
 }
 func (pc *ProductHandler) FindById(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"ProductController": "FindById"})
+	c.JSON(http.StatusOK, gin.H{"ProductHandler": "FindById"})
 
 }
 
