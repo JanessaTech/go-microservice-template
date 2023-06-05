@@ -8,6 +8,7 @@ type AccountService struct {
 }
 
 func (accountService *AccountService) GetAll() ([]*dto.AccountDTO, error) {
+
 	return nil, nil
 }
 
