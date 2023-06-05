@@ -14,7 +14,7 @@ func NewAccountHandler() *AccountHandler {
 }
 
 func (ac *AccountHandler) Register(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"AccountController": "Register"})
+	c.JSON(http.StatusOK, gin.H{"AccountHandler": "Register"})
 }
 
 func (ac *AccountHandler) Login(c *gin.Context) {
@@ -22,7 +22,7 @@ func (ac *AccountHandler) Login(c *gin.Context) {
 }
 
 func (ac *AccountHandler) Logout(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"AccountController": "Logout"})
+	c.JSON(http.StatusOK, gin.H{"AccountHandler": "Logout"})
 }
 func (ac *AccountHandler) Me(c *gin.Context) {
 

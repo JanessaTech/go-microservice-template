@@ -4,6 +4,10 @@ import "github.com/hi-supergirl/go-microservice-template/handlers/services/repos
 
 type AccountDB struct{}
 
+func NewAccountDB() *AccountDB {
+	return &AccountDB{}
+}
+
 func (db *AccountDB) GetAll() ([]*model.Account, error) {
 	return nil, nil
 }
