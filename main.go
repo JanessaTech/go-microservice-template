@@ -54,7 +54,7 @@ func init() {
 // 3. https://github.com/hi-supergirl/go-learning-fx/tree/master/IntegrateFxWithZapLogger4
 // 5. https://github.com/hi-supergirl/go-micro-service-example/tree/master/dive-zapSugaredLogger
 // 6. https://github.com/hi-supergirl/go-practices/tree/master/syncDemo
-// 7.
+// 7. https://github.com/hi-supergirl/go-learning-fx/tree/master/callOrder
 func main() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Fprintf(os.Stderr, "Whoops. There was an error while executing your CLI '%s'", err)
