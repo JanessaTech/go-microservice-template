@@ -2,12 +2,14 @@ package server
 
 import (
 	"context"
-	"fmt"
 	"net"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/hi-supergirl/go-microservice-template/logging"
 	"go.uber.org/fx"
+	"go.uber.org/fx/fxevent"
+	"go.uber.org/zap"
 )
 
 func addGroup(r *gin.Engine) {
@@ -26,7 +28,7 @@ func adminFuc(c *gin.Context) {
 
 }
 
-func Server(lc fx.Lifecycle) *gin.Engine {
+func Server(lc fx.Lifecycle, logger *zap.Logger) *gin.Engine {
 	r := gin.Default()
 	addGroup(r)
 
@@ -35,16 +37,16 @@ func Server(lc fx.Lifecycle) *gin.Engine {
 		OnStart: func(ctx context.Context) error {
 			ln, err := net.Listen("tcp", srv.Addr)
 			if err != nil {
-				fmt.Println("Failed to start HTTP server at", srv.Addr)
+				logger.Sugar().Infoln("Failed to start HTTP server at", srv.Addr)
 				return err
 			}
 			go srv.Serve(ln)
-			fmt.Println("Succeeded to start HTTP server at", srv.Addr)
+			logger.Sugar().Infoln("Succeeded to start HTTP server at", srv.Addr)
 			return nil
 		},
 		OnStop: func(ctx context.Context) error {
 			srv.Shutdown(ctx)
-			fmt.Println("HTTP server is stopped")
+			logger.Sugar().Infoln("HTTP server is stopped")
 			return nil
 		},
 	})
@@ -52,7 +54,13 @@ func Server(lc fx.Lifecycle) *gin.Engine {
 }
 
 func StartApplication(configFile string) {
+	var isDevMode = true
+
 	app := fx.New(
+		fx.Supply(logging.GetLogger(isDevMode)),
+		fx.WithLogger(func(logger *zap.Logger) fxevent.Logger {
+			return &fxevent.ZapLogger{Logger: logger.Named("JanessaTech Template")}
+		}),
 		fx.Provide(
 			Server,
 		),
