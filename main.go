@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/hi-supergirl/go-microservice-template/server"
 	"github.com/spf13/cobra"
 )
 
@@ -24,6 +25,7 @@ var rootCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Start web server from rootCmd ...")
 		fmt.Println("configFile =", configFile)
+		server.StartApplication(configFile)
 	},
 }
 
@@ -35,6 +37,7 @@ var subCommand = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Start web server from subCommand ...")
 		fmt.Println("configFile =", configFile)
+		server.StartApplication(configFile)
 	},
 }
 
@@ -45,6 +48,10 @@ func init() {
 
 // .\go-microservice-template.exe server -c "./config/properties.json"
 // .\go-microservice-template.exe -c "./config/properties.json"
+// when you write codes from scratch, take the code references in the following order:
+// 1. https://github.com/hi-supergirl/go-micro-service-example/tree/master/dive-in-cobra
+// 2. https://github.com/hi-supergirl/go-learning-fx/tree/master/IntegrateFxWithGin-3
+// 3.
 func main() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Fprintf(os.Stderr, "Whoops. There was an error while executing your CLI '%s'", err)
