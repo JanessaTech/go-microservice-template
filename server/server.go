@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/hi-supergirl/go-microservice-template/controllers"
 	"github.com/hi-supergirl/go-microservice-template/logging"
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxevent"
@@ -30,7 +31,7 @@ func adminFuc(c *gin.Context) {
 
 func Server(lc fx.Lifecycle, logger *zap.Logger) *gin.Engine {
 	r := gin.Default()
-	addGroup(r)
+	//addGroup(r)
 
 	srv := &http.Server{Addr: ":8080", Handler: r} // define a web server
 	lc.Append(fx.Hook{
@@ -73,8 +74,14 @@ func StartApplication(configFile string) {
 		}),
 		fx.Provide(
 			Server,
+			controllers.NewAccountHandler,
+			controllers.NewProductHandler,
 		),
-		fx.Invoke(func(*gin.Engine) {}),
+		fx.Invoke(
+			func(*gin.Engine) {},
+			controllers.Route1,
+			controllers.Route2,
+		),
 	)
 	app.Run()
 }
