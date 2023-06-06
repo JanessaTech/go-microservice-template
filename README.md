@@ -25,12 +25,12 @@ docker exec -it mysql /bin/bash
 mysql -uroot -p123456
 show databases;
 # Create a database and user/password pair for that database
-CREATE DATABASE gin-micro-template;
+CREATE DATABASE gin_micro_template;
 CREATE USER 'templateuser'@'%' IDENTIFIED BY 'templatepwd';
 SELECT USER, host from mysql.user;
-GRANT ALL on *.* TO 'gorm'@'%';
-GRANT super on *.* to 'gorm'@'%';
-GRANT show view on *.* to 'gorm'@'%';
+GRANT ALL on *.* TO 'templateuser'@'%';
+GRANT super on *.* to 'templateuser'@'%';
+GRANT show view on *.* to 'templateuser'@'%';
 # Verify if you could access the database gin-micro-template using username and password
 mysql -utemplateuser -ptemplatepwd gin-micro-template
 show tables
