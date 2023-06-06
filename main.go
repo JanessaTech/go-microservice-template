@@ -56,6 +56,9 @@ func init() {
 // 6. https://github.com/hi-supergirl/go-practices/tree/master/syncDemo
 // 7. https://github.com/hi-supergirl/go-learning-fx/tree/master/callOrder
 // 8. https://github.com/hi-supergirl/go-learning-gin/tree/master/loginlogout/jwtDemo
+// How to run this demo
+// login:
+// http://127.0.0.1:8080/api/account/login POST
 func main() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Fprintf(os.Stderr, "Whoops. There was an error while executing your CLI '%s'", err)

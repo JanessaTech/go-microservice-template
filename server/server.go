@@ -7,6 +7,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/hi-supergirl/go-microservice-template/handlers"
+	"github.com/hi-supergirl/go-microservice-template/handlers/services"
+	"github.com/hi-supergirl/go-microservice-template/handlers/services/repositories"
 	"github.com/hi-supergirl/go-microservice-template/logging"
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxevent"
@@ -41,14 +43,13 @@ func printBanner(logger *zap.Logger) {
 	logger.Sugar().Infoln(`
 ****************************************************************
 ****************************************************************
-***************JanessaTech's micorservice template**************
+***************JanessaTech's micro-service template**************
 ****************************************************************
 ****************************************************************`)
 }
 
 func StartApplication(configFile string) {
 	var isDevMode = true
-
 	app := fx.New(
 		fx.Supply(logging.GetLogger(isDevMode)),
 		fx.Invoke(printBanner),
@@ -57,6 +58,8 @@ func StartApplication(configFile string) {
 		}),
 		fx.Provide(
 			Server,
+			repositories.NewAccountDB,
+			services.NewAccountService,
 			handlers.NewAccountHandler,
 			handlers.NewProductController,
 		),
