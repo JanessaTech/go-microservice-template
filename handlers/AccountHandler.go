@@ -37,6 +37,7 @@ func (ah *AccountHandler) Register(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
+	savedAccDto.Password = ""
 
 	c.JSON(http.StatusOK, gin.H{"savedAccDto": savedAccDto})
 }
@@ -69,6 +70,7 @@ func (ah *AccountHandler) Me(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	curAccount.Password = ""
 	c.JSON(http.StatusOK, gin.H{"current account": curAccount})
 }
 

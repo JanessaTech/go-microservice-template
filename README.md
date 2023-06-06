@@ -44,7 +44,59 @@ Run one of two commands below to start a web server:
 ```
 ## Restful APIs
 ### 1.Register an account
-In postman, 
+In postman, run the url below with POST method:
+http://127.0.0.1:8080/api/account/register
+In body tab, choose raw radio box and select JSON from dropdown list. Input json content as body as below:
+```
+{
+    "username" : "JanessaTech1",
+    "password" : "12345"
+}
+```
+You will get a response like below:
+```
+{
+    "savedAccDto": {
+        "id": 0,
+        "username": "JanessaTech1",
+        "password": ""
+    }
+}
+```
 ### 2.Login
+In postman, run the url below with POST method:
+http://127.0.0.1:8080/api/account/login
+In body tab, choose raw radio box and select JSON from dropdown list. Input json content as body as below:
+```
+{
+    "username" : "JanessaTech1",
+    "password" : "12345"
+}
+```
+You will get a response like below:
+```
+{
+    "jwt": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2ODYwNTE5NTQsImlkIjowfQ.aozM7M3QSUXMBWl20IGg30Nph8FY9966KehVu_76jW8"
+}
+```
 ### 3.Check current user
+In postman, run the url below with GET method:
+http://127.0.0.1:8080/api/account/me
+In Authorization tab, select Bearer Token as Type, input the jwt value returned above as token
+You will receive a response like below:
+```
+{
+    "current account": {
+        "id": 0,
+        "username": "JanessaTech1",
+        "password": ""
+    }
+}
+```
+You will receive a reponse like below if token is not correct
+```
+{
+    "error": "anthentication is failed"
+}
+```
 ### Product operations(CURD)
