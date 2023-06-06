@@ -1,5 +1,5 @@
 # About this project
-This project provides a gin-based micro-service template which enables you to develope micro-service application in a fast way.
+This project provides a gin-based micro-service template which enables you to develop a micro-service application in a fast way.
 It uses the following tools:
 - gin : Http web framework
 - fx : A dependency injection system
