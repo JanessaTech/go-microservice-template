@@ -1,6 +1,6 @@
 package dto
 
-import "errors"
+import "golang.org/x/crypto/bcrypt"
 
 type AccountDTO struct {
 	ID       int    `json:"id"`
@@ -9,8 +9,5 @@ type AccountDTO struct {
 }
 
 func (accountDTO *AccountDTO) ValidatePassword(password string) error {
-	if accountDTO.Password != password {
-		return errors.New("password is not matched")
-	}
-	return nil
+	return bcrypt.CompareHashAndPassword([]byte(accountDTO.Password), []byte(password))
 }

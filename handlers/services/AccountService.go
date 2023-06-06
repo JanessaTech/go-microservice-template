@@ -5,6 +5,7 @@ import (
 
 	"github.com/hi-supergirl/go-microservice-template/handlers/services/dto"
 	"github.com/hi-supergirl/go-microservice-template/handlers/services/repositories"
+	"github.com/hi-supergirl/go-microservice-template/handlers/services/repositories/model"
 )
 
 type AccountService struct {
@@ -15,21 +16,13 @@ func NewAccountService(accountDB *repositories.AccountDB) *AccountService {
 	return &AccountService{accountDB: accountDB}
 }
 
-func (accountService *AccountService) GetAll() ([]*dto.AccountDTO, error) {
-	accs, err := accountService.accountDB.GetAll()
+func (accountService *AccountService) GetById(id int) (*dto.AccountDTO, error) {
+	acc, err := accountService.accountDB.GetById(id)
 	if err != nil {
 		return nil, err
 	}
-	dtoAccs := make([]*dto.AccountDTO, len(accs))
-	for _, acc := range accs {
-		dtoAcc := dto.AccountDTO{ID: acc.ID, UserName: acc.UserName, Password: acc.Password}
-		dtoAccs = append(dtoAccs, &dtoAcc)
-	}
-	return dtoAccs, nil
-}
-
-func (accountService *AccountService) GetById(id int) (*dto.AccountDTO, error) {
-	return nil, nil
+	accDto := dto.AccountDTO{ID: acc.ID, UserName: acc.UserName, Password: acc.Password}
+	return &accDto, nil
 }
 
 func (accountService *AccountService) GetByName(name string) (*dto.AccountDTO, error) {
@@ -41,9 +34,16 @@ func (accountService *AccountService) GetByName(name string) (*dto.AccountDTO, e
 	return &accDto, nil
 }
 
-func (accountService *AccountService) Save(account dto.AccountDTO) (*dto.AccountDTO, error) {
-	if account.UserName == "" || account.Password == "" {
+func (accountService *AccountService) Save(accountDto dto.AccountDTO) (*dto.AccountDTO, error) {
+	if accountDto.UserName == "" || accountDto.Password == "" {
 		return nil, errors.New("UserName or Password cannot be empty")
 	}
-	return nil, nil
+	acc := model.Account{ID: accountDto.ID, UserName: accountDto.UserName, Password: accountDto.Password}
+	savedAcc, err := accountService.accountDB.Save(acc)
+	if err != nil {
+		return nil, err
+	}
+	accDto := dto.AccountDTO{ID: savedAcc.ID, UserName: savedAcc.UserName, Password: savedAcc.Password}
+
+	return &accDto, nil
 }

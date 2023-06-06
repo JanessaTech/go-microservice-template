@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/hi-supergirl/go-microservice-template/handlers/services/repositories/model"
 )
@@ -13,21 +14,19 @@ type AccountDB struct {
 func NewAccountDB() *AccountDB {
 	// initiate accounts by test data
 	accounts := make(map[string]*model.Account)
-	accounts["JanessaTech1"] = &model.Account{ID: 1, UserName: "JanessaTech1", Password: "12345"}
-	accounts["JanessaTech2"] = &model.Account{ID: 2, UserName: "JanessaTech2", Password: "12345"}
 	return &AccountDB{accounts: accounts}
 }
 
-func (db *AccountDB) GetAll() ([]*model.Account, error) {
-	accs := make([]*model.Account, len(db.accounts))
-	for _, value := range db.accounts {
-		accs = append(accs, value)
-	}
-	return accs, nil
-}
-
 func (db *AccountDB) GetById(id int) (*model.Account, error) {
-	return nil, nil
+	name := db.getAccountNameById(id)
+	if name == "" {
+		return nil, fmt.Errorf("cannot find account by id %d", id)
+	}
+	acc, err := db.GetByName(name)
+	if err != nil {
+		return nil, err
+	}
+	return acc, nil
 }
 func (db *AccountDB) GetByName(name string) (*model.Account, error) {
 	val, ok := db.accounts[name]
@@ -38,8 +37,20 @@ func (db *AccountDB) GetByName(name string) (*model.Account, error) {
 }
 
 func (db *AccountDB) Save(account model.Account) (*model.Account, error) {
-	return nil, nil
+	acc, ok := db.accounts[account.UserName]
+	if ok {
+		return nil, errors.New("account " + acc.UserName + " already exists")
+	}
+	db.accounts[account.UserName] = &account
+	return &account, nil
 }
-func (db *AccountDB) DeleteById(id int) error {
-	return nil
+
+func (db *AccountDB) getAccountNameById(id int) string {
+	var name string
+	for _, acc := range db.accounts {
+		if acc.ID == id {
+			name = acc.UserName
+		}
+	}
+	return name
 }

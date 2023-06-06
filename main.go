@@ -46,8 +46,6 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&configFile, "conf", "c", "./config/properties.json", "config file path")
 }
 
-// .\go-microservice-template.exe server -c "./config/properties.json"
-// .\go-microservice-template.exe -c "./config/properties.json"
 // when you write codes from scratch, take the code references in the following order:
 // 1. https://github.com/hi-supergirl/go-micro-service-example/tree/master/dive-in-cobra
 // 2. https://github.com/hi-supergirl/go-learning-fx/tree/master/IntegrateFxWithGin-3
@@ -56,7 +54,15 @@ func init() {
 // 6. https://github.com/hi-supergirl/go-practices/tree/master/syncDemo
 // 7. https://github.com/hi-supergirl/go-learning-fx/tree/master/callOrder
 // 8. https://github.com/hi-supergirl/go-learning-gin/tree/master/loginlogout/jwtDemo
+//
 // How to run this demo
+// Run the following one of commands to start web server:
+// .\go-microservice-template.exe server -c "./config/properties.json"
+// .\go-microservice-template.exe -c "./config/properties.json"
+//
+// register:
+// http://127.0.0.1:8080/api/account/register POST
+//
 // login:
 // http://127.0.0.1:8080/api/account/login POST
 func main() {
