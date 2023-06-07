@@ -10,16 +10,22 @@ import (
 	"github.com/hi-supergirl/go-microservice-template/middlewares"
 )
 
-type AccountHandler struct {
-	accountService *services.AccountService
+type AccountHandler interface {
+	Register(c *gin.Context)
+	Login(c *gin.Context)
+	Me(c *gin.Context)
+}
+
+type accountHandler struct {
+	accountService services.AccountService
 	nextId         int
 }
 
-func NewAccountHandler(accountService *services.AccountService) *AccountHandler {
-	return &AccountHandler{accountService: accountService}
+func NewAccountHandler(accountService services.AccountService) AccountHandler {
+	return &accountHandler{accountService: accountService}
 }
 
-func (ah *AccountHandler) Register(c *gin.Context) {
+func (ah *accountHandler) Register(c *gin.Context) {
 	var auth dto.AccountDTO
 	if err := c.ShouldBindJSON(&auth); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -33,7 +39,7 @@ func (ah *AccountHandler) Register(c *gin.Context) {
 	}
 	accDto := dto.AccountDTO{ID: ah.nextId, UserName: auth.UserName, Password: encodedPassword}
 	ah.nextId = ah.nextId + 1
-	savedAccDto, err := ah.accountService.Save(accDto)
+	savedAccDto, err := ah.accountService.Save(c.Request.Context(), accDto)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
@@ -42,13 +48,13 @@ func (ah *AccountHandler) Register(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"savedAccDto": savedAccDto})
 }
 
-func (ah *AccountHandler) Login(c *gin.Context) {
+func (ah *accountHandler) Login(c *gin.Context) {
 	var auth dto.AccountDTO
 	if err := c.ShouldBindJSON(&auth); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	accDto, err := ah.accountService.GetByName(auth.UserName)
+	accDto, err := ah.accountService.GetByName(c.Request.Context(), auth.UserName)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
@@ -64,7 +70,7 @@ func (ah *AccountHandler) Login(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"jwt": jwt})
 }
 
-func (ah *AccountHandler) Me(c *gin.Context) {
+func (ah *accountHandler) Me(c *gin.Context) {
 	curAccount, err := ah.getCurrentAccount(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -74,19 +80,19 @@ func (ah *AccountHandler) Me(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"current account": curAccount})
 }
 
-func (ah *AccountHandler) getCurrentAccount(c *gin.Context) (*dto.AccountDTO, error) {
+func (ah *accountHandler) getCurrentAccount(c *gin.Context) (*dto.AccountDTO, error) {
 	currentId, err := helper.GetCurrentAccountId(c)
 	if err != nil {
 		return nil, err
 	}
-	accDto, err := ah.accountService.GetById(currentId)
+	accDto, err := ah.accountService.GetById(c.Request.Context(), currentId)
 	if err != nil {
 		return nil, err
 	}
 	return accDto, nil
 }
 
-func AccountRoute(ah *AccountHandler, c *gin.Engine) {
+func AccountRoute(ah AccountHandler, c *gin.Engine) {
 	api := c.Group("/api")
 
 	api.Use()

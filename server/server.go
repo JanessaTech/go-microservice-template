@@ -9,6 +9,7 @@ import (
 	"github.com/hi-supergirl/go-microservice-template/handlers"
 	"github.com/hi-supergirl/go-microservice-template/handlers/services"
 	"github.com/hi-supergirl/go-microservice-template/handlers/services/repositories"
+	"github.com/hi-supergirl/go-microservice-template/handlers/services/repositories/database"
 	"github.com/hi-supergirl/go-microservice-template/logging"
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxevent"
@@ -58,6 +59,7 @@ func StartApplication(configFile string) {
 		}),
 		fx.Provide(
 			Server,
+			database.NewDataBase,
 			repositories.NewAccountDB,
 			services.NewAccountService,
 			handlers.NewAccountHandler,

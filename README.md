@@ -31,10 +31,10 @@ SELECT USER, host from mysql.user;
 GRANT ALL on *.* TO 'templateuser'@'%';
 GRANT super on *.* to 'templateuser'@'%';
 GRANT show view on *.* to 'templateuser'@'%';
-# Verify if you could access the database gin-micro-template using username and password
-mysql -utemplateuser -ptemplatepwd gin-micro-template
+# Verify if you could access the database gin_micro_template using username and password
+mysql -utemplateuser -ptemplatepwd gin_micro_template
 show tables
-// no tables
+// Empty set (0.00 sec)
 ```
 ## Start commands
 Run one of two commands below to start a web server:

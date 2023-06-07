@@ -6,32 +6,41 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type ProductHandler struct{}
-
-func NewProductController() *ProductHandler {
-	return &ProductHandler{}
+type ProductHandler interface {
+	GetAll(c *gin.Context)
+	FindById(c *gin.Context)
+	Add(c *gin.Context)
+	Update(c *gin.Context)
+	Delete(c *gin.Context)
 }
 
-func (pc *ProductHandler) GetAll(c *gin.Context) {
+type productHandler struct {
+}
+
+func NewProductController() ProductHandler {
+	return &productHandler{}
+}
+
+func (pc *productHandler) GetAll(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"ProductHandler": "GetAll"})
 }
-func (pc *ProductHandler) FindById(c *gin.Context) {
+func (pc *productHandler) FindById(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"ProductHandler": "FindById"})
 
 }
 
-func (pc *ProductHandler) Add(c *gin.Context) {
+func (pc *productHandler) Add(c *gin.Context) {
 
 }
 
-func (pc *ProductHandler) Update(c *gin.Context) {
+func (pc *productHandler) Update(c *gin.Context) {
 
 }
-func (pc *ProductHandler) Delete(c *gin.Context) {
+func (pc *productHandler) Delete(c *gin.Context) {
 
 }
 
-func ProductRoute(pc *ProductHandler, c *gin.Engine) {
+func ProductRoute(pc ProductHandler, c *gin.Engine) {
 	api := c.Group("/api")
 
 	api.GET("/products", pc.GetAll)
