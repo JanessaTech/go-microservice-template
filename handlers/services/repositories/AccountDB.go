@@ -2,7 +2,6 @@ package repositories
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/hi-supergirl/go-microservice-template/handlers/services/repositories/model"
@@ -10,7 +9,7 @@ import (
 )
 
 type AccountDB interface {
-	GetById(ctx context.Context, id int) (*model.Account, error)
+	GetById(ctx context.Context, id uint) (*model.Account, error)
 	GetByName(ctx context.Context, name string) (*model.Account, error)
 	Save(ctx context.Context, account model.Account) (*model.Account, error)
 }
@@ -26,40 +25,30 @@ func NewAccountDB(db *gorm.DB) AccountDB {
 	return &accountDB{db: db, accounts: accounts}
 }
 
-func (db *accountDB) GetById(ctx context.Context, id int) (*model.Account, error) {
-	name := db.getAccountNameById(id)
-	if name == "" {
-		return nil, fmt.Errorf("cannot find account by id %d", id)
-	}
-	acc, err := db.GetByName(ctx, name)
-	if err != nil {
+func (accountDB *accountDB) GetById(ctx context.Context, id uint) (*model.Account, error) {
+	var acc model.Account
+	if err := accountDB.db.WithContext(ctx).Where("id = ?", id).First(&acc).Error; err != nil {
+		fmt.Println("[accountDB.GetById] Failed to get account by id", id)
 		return nil, err
 	}
-	return acc, nil
+
+	return &acc, nil
 }
-func (db *accountDB) GetByName(ctx context.Context, name string) (*model.Account, error) {
-	val, ok := db.accounts[name]
-	if !ok {
-		return nil, errors.New("cannot find account by name " + name)
+func (accountDB *accountDB) GetByName(ctx context.Context, name string) (*model.Account, error) {
+	var acc model.Account
+	if err := accountDB.db.WithContext(ctx).Where("user_name = ?", name).First(&acc).Error; err != nil {
+		fmt.Println("[accountDB.GetByName] Failed to save account due to ", err)
+		return nil, err
 	}
-	return val, nil
+
+	return &acc, nil
 }
 
-func (db *accountDB) Save(ctx context.Context, account model.Account) (*model.Account, error) {
-	acc, ok := db.accounts[account.UserName]
-	if ok {
-		return nil, errors.New("account " + acc.UserName + " already exists")
+func (accountDB *accountDB) Save(ctx context.Context, account model.Account) (*model.Account, error) {
+
+	if err := accountDB.db.WithContext(ctx).Create(&account).Error; err != nil {
+		fmt.Println("[accountDB.Save] Failed to save account due to ", err)
+		return nil, err
 	}
-	db.accounts[account.UserName] = &account
 	return &account, nil
-}
-
-func (db *accountDB) getAccountNameById(id int) string {
-	var name string
-	for _, acc := range db.accounts {
-		if acc.ID == id {
-			name = acc.UserName
-		}
-	}
-	return name
 }

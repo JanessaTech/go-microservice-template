@@ -18,7 +18,6 @@ type AccountHandler interface {
 
 type accountHandler struct {
 	accountService services.AccountService
-	nextId         int
 }
 
 func NewAccountHandler(accountService services.AccountService) AccountHandler {
@@ -37,8 +36,7 @@ func (ah *accountHandler) Register(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	accDto := dto.AccountDTO{ID: ah.nextId, UserName: auth.UserName, Password: encodedPassword}
-	ah.nextId = ah.nextId + 1
+	accDto := dto.AccountDTO{UserName: auth.UserName, Password: encodedPassword}
 	savedAccDto, err := ah.accountService.Save(c.Request.Context(), accDto)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

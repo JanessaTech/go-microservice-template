@@ -64,12 +64,12 @@ func getTokenFromRequest(context *gin.Context) string {
 	return ""
 }
 
-func GetCurrentAccountId(ctx *gin.Context) (int, error) {
+func GetCurrentAccountId(ctx *gin.Context) (uint, error) {
 	token, err := getToken(ctx)
 	if err != nil {
-		return -1, err
+		return 0, err
 	}
 	claims, _ := token.Claims.(jwt.MapClaims)
-	userId, _ := claims["id"].(int)
-	return userId, nil
+	userId, _ := claims["id"].(float64)
+	return uint(userId), nil
 }

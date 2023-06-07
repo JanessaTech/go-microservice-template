@@ -11,7 +11,7 @@ import (
 
 // Create a new database connection
 func NewDataBase() (*gorm.DB, error) {
-	dsn := "gorm:gorm_demo@tcp(192.168.0.200:3306)/gorm_demo?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "templateuser:templatepwd@tcp(192.168.0.200:3306)/gin_micro_template?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.New(mysql.Config{
 		DSN: dsn,
 	}), &gorm.Config{})

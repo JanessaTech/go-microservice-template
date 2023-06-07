@@ -10,7 +10,7 @@ import (
 )
 
 type AccountService interface {
-	GetById(ctx context.Context, id int) (*dto.AccountDTO, error)
+	GetById(ctx context.Context, id uint) (*dto.AccountDTO, error)
 	GetByName(ctx context.Context, name string) (*dto.AccountDTO, error)
 	Save(ctx context.Context, accountDto dto.AccountDTO) (*dto.AccountDTO, error)
 }
@@ -23,7 +23,7 @@ func NewAccountService(accountDB repositories.AccountDB) AccountService {
 	return &accountService{accountDB: accountDB}
 }
 
-func (accountService *accountService) GetById(ctx context.Context, id int) (*dto.AccountDTO, error) {
+func (accountService *accountService) GetById(ctx context.Context, id uint) (*dto.AccountDTO, error) {
 	acc, err := accountService.accountDB.GetById(ctx, id)
 	if err != nil {
 		return nil, err
@@ -45,7 +45,7 @@ func (accountService *accountService) Save(ctx context.Context, accountDto dto.A
 	if accountDto.UserName == "" || accountDto.Password == "" {
 		return nil, errors.New("UserName or Password cannot be empty")
 	}
-	acc := model.Account{ID: accountDto.ID, UserName: accountDto.UserName, Password: accountDto.Password}
+	acc := model.Account{UserName: accountDto.UserName, Password: accountDto.Password}
 	savedAcc, err := accountService.accountDB.Save(ctx, acc)
 	if err != nil {
 		return nil, err

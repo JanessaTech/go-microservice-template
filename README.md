@@ -19,10 +19,13 @@ sudo docker run -p 3306:3306 --name mysql \
 -e MYSQL_ROOT_PASSWORD=123456 \
 --restart=always \
 -itd mysql:5.7.19
+
 # enter the container just created
 docker exec -it mysql /bin/bash
+
 # enter mysql
 mysql -uroot -p123456
+
 show databases;
 # Create a database and user/password pair for that database
 CREATE DATABASE gin_micro_template;
@@ -31,10 +34,23 @@ SELECT USER, host from mysql.user;
 GRANT ALL on *.* TO 'templateuser'@'%';
 GRANT super on *.* to 'templateuser'@'%';
 GRANT show view on *.* to 'templateuser'@'%';
+
 # Verify if you could access the database gin_micro_template using username and password
 mysql -utemplateuser -ptemplatepwd gin_micro_template
-show tables
-// Empty set (0.00 sec)
+
+# Creat tables
+CREATE TABLE accounts
+(
+`id`              INT NOT NULL AUTO_INCREMENT,
+`user_name`       VARCHAR(125) NOT NULL,
+`password`        VARCHAR(125) NOT NULL,
+`created_at`      TIMESTAMP NULL,
+`updated_at`      TIMESTAMP NULL,
+PRIMARY KEY (`id`),
+UNIQUE INDEX unique_user_name_idx(`user_name`)
+)
+ENGINE = InnoDB
+DEFAULT CHARSET = UTF8MB4;
 ```
 ## Start commands
 Run one of two commands below to start a web server:
