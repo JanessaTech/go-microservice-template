@@ -7,6 +7,7 @@ import (
 	"github.com/hi-supergirl/go-microservice-template/handlers/services"
 	"github.com/hi-supergirl/go-microservice-template/handlers/services/dto"
 	"github.com/hi-supergirl/go-microservice-template/helper"
+	"github.com/hi-supergirl/go-microservice-template/logging"
 	"github.com/hi-supergirl/go-microservice-template/middlewares"
 )
 
@@ -25,6 +26,8 @@ func NewAccountHandler(accountService services.AccountService) AccountHandler {
 }
 
 func (ah *accountHandler) Register(c *gin.Context) {
+	logger := logging.FromContext(c)
+	logger.Infow("[accountHandler]", "Register", "")
 	var auth dto.AccountDTO
 	if err := c.ShouldBindJSON(&auth); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -47,6 +50,8 @@ func (ah *accountHandler) Register(c *gin.Context) {
 }
 
 func (ah *accountHandler) Login(c *gin.Context) {
+	logger := logging.FromContext(c)
+	logger.Infow("[accountHandler]", "Login", "")
 	var auth dto.AccountDTO
 	if err := c.ShouldBindJSON(&auth); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -69,6 +74,8 @@ func (ah *accountHandler) Login(c *gin.Context) {
 }
 
 func (ah *accountHandler) Me(c *gin.Context) {
+	logger := logging.FromContext(c)
+	logger.Infow("[accountHandler]", "Me", "'")
 	curAccount, err := ah.getCurrentAccount(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -92,14 +99,13 @@ func (ah *accountHandler) getCurrentAccount(c *gin.Context) (*dto.AccountDTO, er
 
 func AccountRoute(ah AccountHandler, c *gin.Engine) {
 	api := c.Group("/api")
-
-	api.Use()
+	api.Use(middlewares.RequestTraceMiddleWare())
 	{
 		api.POST("/account/register", ah.Register)
 		api.POST("/account/login", ah.Login)
 	}
 
-	api.Use(middlewares.VerifyJwtToken())
+	api.Use(middlewares.JwtTokenMiddleWare())
 	{
 		api.GET("/account/me", ah.Me)
 	}

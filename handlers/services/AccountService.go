@@ -7,6 +7,7 @@ import (
 	"github.com/hi-supergirl/go-microservice-template/handlers/services/dto"
 	"github.com/hi-supergirl/go-microservice-template/handlers/services/repositories"
 	"github.com/hi-supergirl/go-microservice-template/handlers/services/repositories/model"
+	"github.com/hi-supergirl/go-microservice-template/logging"
 )
 
 type AccountService interface {
@@ -42,12 +43,15 @@ func (accountService *accountService) GetByName(ctx context.Context, name string
 }
 
 func (accountService *accountService) Save(ctx context.Context, accountDto dto.AccountDTO) (*dto.AccountDTO, error) {
+	logger := logging.FromContext(ctx)
 	if accountDto.UserName == "" || accountDto.Password == "" {
+		logger.Errorw("[accountService]", "Save", "UserName or Password cannot be empty")
 		return nil, errors.New("UserName or Password cannot be empty")
 	}
 	acc := model.Account{UserName: accountDto.UserName, Password: accountDto.Password}
 	savedAcc, err := accountService.accountDB.Save(ctx, acc)
 	if err != nil {
+		logger.Errorw("[accountService]", "Save", err)
 		return nil, err
 	}
 	accDto := dto.AccountDTO{ID: savedAcc.ID, UserName: savedAcc.UserName, Password: savedAcc.Password}

@@ -1,14 +1,18 @@
 package logging
 
 import (
+	"context"
 	"fmt"
 	"sync"
 
+	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
 
 var once sync.Once
 var logger *zap.Logger
+
+const loggerKey = "logger"
 
 func createLogger(isDevMode bool) {
 	once.Do(func() {
@@ -30,4 +34,22 @@ func GetLogger(isDevMode bool) *zap.Logger {
 		createLogger(isDevMode)
 	}
 	return logger
+}
+
+func WithLogger(ctx context.Context, logger *zap.SugaredLogger) context.Context {
+	if gCtx, ok := ctx.(*gin.Context); ok {
+		ctx = gCtx.Request.Context()
+	}
+	return context.WithValue(ctx, loggerKey, logger)
+}
+
+func FromContext(ctx context.Context) *zap.SugaredLogger {
+	if gCtx, ok := ctx.(*gin.Context); ok {
+		ctx = gCtx.Request.Context()
+	}
+
+	if logger, ok := ctx.Value(loggerKey).(*zap.SugaredLogger); ok {
+		return logger
+	}
+	return GetLogger(true).Sugar()
 }
