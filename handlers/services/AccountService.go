@@ -8,6 +8,7 @@ import (
 	"github.com/hi-supergirl/go-microservice-template/handlers/services/repositories"
 	"github.com/hi-supergirl/go-microservice-template/handlers/services/repositories/model"
 	"github.com/hi-supergirl/go-microservice-template/logging"
+	"go.uber.org/zap"
 )
 
 type AccountService interface {
@@ -20,7 +21,7 @@ type accountService struct {
 	accountDB repositories.AccountDB
 }
 
-func NewAccountService(accountDB repositories.AccountDB) AccountService {
+func NewAccountService(logger *zap.Logger, accountDB repositories.AccountDB) AccountService {
 	return &accountService{accountDB: accountDB}
 }
 

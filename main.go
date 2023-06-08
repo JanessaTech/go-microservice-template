@@ -46,7 +46,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&configFile, "conf", "c", "./config/properties.json", "config file path")
 }
 
-// when you write codes from scratch, take the code references in the following order:
+// Take the code references in the following order if if you want to write codes from scratch,
 // 1. https://github.com/hi-supergirl/go-micro-service-example/tree/master/dive-in-cobra
 // 2. https://github.com/hi-supergirl/go-learning-fx/tree/master/IntegrateFxWithGin-3
 // 3. https://github.com/hi-supergirl/go-learning-fx/tree/master/IntegrateFxWithZapLogger4
@@ -55,6 +55,7 @@ func init() {
 // 7. https://github.com/hi-supergirl/go-learning-fx/tree/master/callOrder
 // 8. https://github.com/hi-supergirl/go-learning-gin/tree/master/loginlogout/jwtDemo
 // 9. https://github.com/hi-supergirl/go-learning-gorm
+// 10. https://github.com/hi-supergirl/go-micro-service-example/tree/master/dive-koanf
 func main() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Fprintf(os.Stderr, "Whoops. There was an error while executing your CLI '%s'", err)

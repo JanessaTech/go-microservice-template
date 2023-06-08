@@ -1,0 +1,13 @@
+{
+    "logging" : {
+        "Development" : true
+    },
+    "database" : {
+        "userName" : "templateuser",
+        "password" : "templatepwd",
+        "host" : "192.168.0.200",
+        "schema" : "gin_micro_template",
+        "maxIdleConns" : 10,
+        "maxOpenConns" : 100
+    }
+}

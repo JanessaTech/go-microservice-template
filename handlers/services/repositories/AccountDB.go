@@ -5,6 +5,7 @@ import (
 
 	"github.com/hi-supergirl/go-microservice-template/handlers/services/repositories/model"
 	"github.com/hi-supergirl/go-microservice-template/logging"
+	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
@@ -19,7 +20,7 @@ type accountDB struct {
 	accounts map[string]*model.Account
 }
 
-func NewAccountDB(db *gorm.DB) AccountDB {
+func NewAccountDB(logger *zap.Logger, db *gorm.DB) AccountDB {
 	// initiate accounts by test data
 	accounts := make(map[string]*model.Account)
 	return &accountDB{db: db, accounts: accounts}

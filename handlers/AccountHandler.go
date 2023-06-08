@@ -9,6 +9,7 @@ import (
 	"github.com/hi-supergirl/go-microservice-template/helper"
 	"github.com/hi-supergirl/go-microservice-template/logging"
 	"github.com/hi-supergirl/go-microservice-template/middlewares"
+	"go.uber.org/zap"
 )
 
 type AccountHandler interface {
@@ -21,7 +22,7 @@ type accountHandler struct {
 	accountService services.AccountService
 }
 
-func NewAccountHandler(accountService services.AccountService) AccountHandler {
+func NewAccountHandler(logger *zap.Logger, accountService services.AccountService) AccountHandler {
 	return &accountHandler{accountService: accountService}
 }
 
@@ -97,7 +98,7 @@ func (ah *accountHandler) getCurrentAccount(c *gin.Context) (*dto.AccountDTO, er
 	return accDto, nil
 }
 
-func AccountRoute(ah AccountHandler, c *gin.Engine) {
+func AccountRoute(ah AccountHandler, logger *zap.Logger, c *gin.Engine) {
 	api := c.Group("/api")
 	api.Use(middlewares.RequestTraceMiddleWare())
 	{

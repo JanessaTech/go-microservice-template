@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"github.com/gin-gonic/gin"
+	"github.com/hi-supergirl/go-microservice-template/config"
 	"go.uber.org/zap"
 )
 
@@ -14,10 +15,10 @@ var logger *zap.Logger
 
 const loggerKey = "logger"
 
-func createLogger(isDevMode bool) {
+func createLogger(isDevelopment bool) {
 	once.Do(func() {
 		var err error
-		if isDevMode {
+		if isDevelopment {
 			logger, err = zap.NewDevelopment()
 		} else {
 			logger, err = zap.NewProduction()
@@ -29,11 +30,18 @@ func createLogger(isDevMode bool) {
 	})
 }
 
-func GetLogger(isDevMode bool) *zap.Logger {
+func GetLogger(config *config.Config) *zap.Logger {
 	if logger == nil {
-		createLogger(isDevMode)
+		createLogger(config.LoggingConfig.Development)
 	}
 	return logger
+}
+
+func DefaultLogger() *zap.SugaredLogger {
+	if logger == nil {
+		createLogger(true)
+	}
+	return logger.Sugar()
 }
 
 func WithLogger(ctx context.Context, logger *zap.SugaredLogger) context.Context {
@@ -51,5 +59,5 @@ func FromContext(ctx context.Context) *zap.SugaredLogger {
 	if logger, ok := ctx.Value(loggerKey).(*zap.SugaredLogger); ok {
 		return logger
 	}
-	return GetLogger(true).Sugar()
+	return DefaultLogger()
 }

@@ -2,10 +2,12 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"net"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/hi-supergirl/go-microservice-template/config"
 	"github.com/hi-supergirl/go-microservice-template/handlers"
 	"github.com/hi-supergirl/go-microservice-template/handlers/services"
 	"github.com/hi-supergirl/go-microservice-template/handlers/services/repositories"
@@ -50,9 +52,13 @@ func printBanner(logger *zap.Logger) {
 }
 
 func StartApplication(configFile string) {
-	var isDevMode = true
+	config, err := config.NewConfig(configFile)
+	if err != nil {
+		fmt.Println("Failed to read config file. Exit")
+	}
+
 	app := fx.New(
-		fx.Supply(logging.GetLogger(isDevMode)),
+		fx.Supply(logging.GetLogger(config), config),
 		fx.Invoke(printBanner),
 		fx.WithLogger(func(logger *zap.Logger) fxevent.Logger {
 			return &fxevent.ZapLogger{Logger: logger.Named("JanessaTech Template")}

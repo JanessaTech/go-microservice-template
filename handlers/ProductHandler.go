@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 type ProductHandler interface {
@@ -17,7 +18,7 @@ type ProductHandler interface {
 type productHandler struct {
 }
 
-func NewProductController() ProductHandler {
+func NewProductController(logger *zap.Logger) ProductHandler {
 	return &productHandler{}
 }
 
@@ -40,7 +41,7 @@ func (pc *productHandler) Delete(c *gin.Context) {
 
 }
 
-func ProductRoute(pc ProductHandler, c *gin.Engine) {
+func ProductRoute(pc ProductHandler, logger *zap.Logger, c *gin.Engine) {
 	api := c.Group("/api")
 
 	api.GET("/products", pc.GetAll)

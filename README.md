@@ -11,11 +11,11 @@ It uses the following tools:
 # How to run this project
 ## Prepare MYSQL
 I assume you have docker installed. We will use docker to install mysql
-Run the commands below to install msyql and configure mysql
+Run the commands below to install & configure msyql
 ```
 # Install mysql container
 sudo docker run -p 3306:3306 --name mysql \
--v /home/jane/docker/mysql/data:/data \
+-v /home/janessatech/docker/mysql/data:/data \
 -e MYSQL_ROOT_PASSWORD=123456 \
 --restart=always \
 -itd mysql:5.7.19
@@ -27,7 +27,7 @@ docker exec -it mysql /bin/bash
 mysql -uroot -p123456
 
 show databases;
-# Create a database and user/password pair for that database
+# Create a database and username/password pair for that database
 CREATE DATABASE gin_micro_template;
 CREATE USER 'templateuser'@'%' IDENTIFIED BY 'templatepwd';
 SELECT USER, host from mysql.user;
@@ -52,9 +52,10 @@ UNIQUE INDEX unique_user_name_idx(`user_name`)
 ENGINE = InnoDB
 DEFAULT CHARSET = UTF8MB4;
 ```
-## Start commands
-Run one of two commands below to start a web server:
-```sh
+## Starting commands
+Run one of the three commands below to start a web server:
+```
+.\go-microservice-template.exe
 .\go-microservice-template.exe server -c "./config/properties.json"
 .\go-microservice-template.exe -c "./config/properties.json"
 ```
