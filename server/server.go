@@ -55,6 +55,7 @@ func StartApplication(configFile string) {
 	config, err := config.NewConfig(configFile)
 	if err != nil {
 		fmt.Println("Failed to read config file. Exit")
+		return
 	}
 
 	app := fx.New(
