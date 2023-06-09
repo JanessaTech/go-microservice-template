@@ -51,6 +51,18 @@ UNIQUE INDEX unique_user_name_idx(`user_name`)
 )
 ENGINE = InnoDB
 DEFAULT CHARSET = UTF8MB4;
+
+CREATE TABLE products
+(
+`id`              INT NOT NULL AUTO_INCREMENT,
+`name`       	  VARCHAR(125) NOT NULL,
+`created_at`      TIMESTAMP NULL,
+`updated_at`      TIMESTAMP NULL,
+PRIMARY KEY (`id`),
+UNIQUE INDEX unique_name_idx(`name`)
+)
+ENGINE = InnoDB
+DEFAULT CHARSET = UTF8MB4;
 ```
 ## Starting commands
 Run one of the three commands below to start a web server:
