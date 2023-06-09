@@ -27,43 +27,46 @@ func NewProductHandler(logger *zap.Logger, productService services.ProductServic
 }
 
 func (ph *productHandler) GetAll(c *gin.Context) {
-	logger := logging.FromContext(c)
-	logger.Infow("[productHandler]", "GetAll", "")
-	products, err := ph.productService.GetAll(c.Request.Context())
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{"success": products})
+	execute(c, func(c *gin.Context) *Response {
+		logger := logging.FromContext(c)
+		logger.Infow("[productHandler]", "GetAll", "")
+		products, err := ph.productService.GetAll(c.Request.Context())
+		if err != nil {
+			return NewResponse(http.StatusBadRequest, failed, err)
+		}
+		return NewResponse(http.StatusOK, success, products)
+	})
 }
 
 func (ph *productHandler) Add(c *gin.Context) {
-	logger := logging.FromContext(c)
-	logger.Infow("[productHandler]", "Add", "")
-	var productDtO dto.ProductDTO
-	if err := c.ShouldBindJSON(&productDtO); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	savedProduct, err := ph.productService.Add(c.Request.Context(), productDtO)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
+	execute(c, func(c *gin.Context) *Response {
+		logger := logging.FromContext(c)
+		logger.Infow("[productHandler]", "Add", "")
+		var productDtO dto.ProductDTO
+		if err := c.ShouldBindJSON(&productDtO); err != nil {
+			return NewResponse(http.StatusBadRequest, failed, err)
+		}
+		savedProduct, err := ph.productService.Add(c.Request.Context(), productDtO)
+		if err != nil {
+			return NewResponse(http.StatusBadRequest, failed, err)
+		}
 
-	c.JSON(http.StatusOK, gin.H{"success": savedProduct})
+		return NewResponse(http.StatusOK, success, savedProduct)
+	})
 }
 
 func (ph *productHandler) Delete(c *gin.Context) {
-	logger := logging.FromContext(c)
-	id := StringToUint(c.Param("id"))
-	logger.Infow("[productHandler]", "Delete id = ", id)
-	err := ph.productService.Delete(c.Request.Context(), id)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{"success": ""})
+	execute(c, func(c *gin.Context) *Response {
+		logger := logging.FromContext(c)
+		id := StringToUint(c.Param("id"))
+		logger.Infow("[productHandler]", "Delete id = ", id)
+		err := ph.productService.Delete(c.Request.Context(), id)
+		if err != nil {
+			return NewResponse(http.StatusBadRequest, failed, err)
+		}
+		return NewResponse(http.StatusOK, success, nil)
+	})
+
 }
 
 func StringToUint(s string) uint {

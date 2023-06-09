@@ -27,65 +27,63 @@ func NewAccountHandler(logger *zap.Logger, accountService services.AccountServic
 }
 
 func (ah *accountHandler) Register(c *gin.Context) {
-	logger := logging.FromContext(c)
-	logger.Infow("[accountHandler]", "Register", "")
-	var auth dto.AccountDTO
-	if err := c.ShouldBindJSON(&auth); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
+	execute(c, func(c *gin.Context) *Response {
+		logger := logging.FromContext(c)
+		logger.Infow("[accountHandler]", "Register", "")
+		var auth dto.AccountDTO
+		if err := c.ShouldBindJSON(&auth); err != nil {
+			return NewResponse(http.StatusBadRequest, failed, err)
+		}
 
-	encodedPassword, err := helper.EncodePassword(auth.Password)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	accDto := dto.AccountDTO{UserName: auth.UserName, Password: encodedPassword}
-	savedAccDto, err := ah.accountService.Save(c.Request.Context(), accDto)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	savedAccDto.Password = ""
-
-	c.JSON(http.StatusOK, gin.H{"savedAccDto": savedAccDto})
+		encodedPassword, err := helper.EncodePassword(auth.Password)
+		if err != nil {
+			return NewResponse(http.StatusBadRequest, failed, err)
+		}
+		accDto := dto.AccountDTO{UserName: auth.UserName, Password: encodedPassword}
+		savedAccDto, err := ah.accountService.Save(c.Request.Context(), accDto)
+		if err != nil {
+			return NewResponse(http.StatusBadRequest, failed, err)
+		}
+		savedAccDto.Password = ""
+		return NewResponse(http.StatusOK, success, savedAccDto)
+	})
 }
 
 func (ah *accountHandler) Login(c *gin.Context) {
-	logger := logging.FromContext(c)
-	logger.Infow("[accountHandler]", "Login", "")
-	var auth dto.AccountDTO
-	if err := c.ShouldBindJSON(&auth); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	accDto, err := ah.accountService.GetByName(c.Request.Context(), auth.UserName)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	if err := accDto.ValidatePassword(auth.Password); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	jwt, err := helper.GenerateJWT(accDto)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{"jwt": jwt})
+	execute(c, func(c *gin.Context) *Response {
+		logger := logging.FromContext(c)
+		logger.Infow("[accountHandler]", "Login", "")
+		var auth dto.AccountDTO
+		if err := c.ShouldBindJSON(&auth); err != nil {
+			return NewResponse(http.StatusBadRequest, failed, err)
+		}
+		accDto, err := ah.accountService.GetByName(c.Request.Context(), auth.UserName)
+		if err != nil {
+			return NewResponse(http.StatusBadRequest, failed, err)
+		}
+		if err := accDto.ValidatePassword(auth.Password); err != nil {
+			return NewResponse(http.StatusBadRequest, failed, err)
+		}
+		jwt, err := helper.GenerateJWT(accDto)
+		if err != nil {
+			return NewResponse(http.StatusBadRequest, failed, err)
+		}
+		return NewResponse(http.StatusOK, success, jwt)
+	})
 }
 
 func (ah *accountHandler) Me(c *gin.Context) {
-	logger := logging.FromContext(c)
-	logger.Infow("[accountHandler]", "Me", "'")
-	curAccount, err := ah.getCurrentAccount(c)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	curAccount.Password = ""
-	c.JSON(http.StatusOK, gin.H{"current account": curAccount})
+	execute(c, func(c *gin.Context) *Response {
+		logger := logging.FromContext(c)
+		logger.Infow("[accountHandler]", "Me", "'")
+		curAccount, err := ah.getCurrentAccount(c)
+		if err != nil {
+			return NewResponse(http.StatusBadRequest, failed, err)
+		}
+		curAccount.Password = ""
+		return NewResponse(http.StatusOK, success, curAccount)
+	})
+
 }
 
 func (ah *accountHandler) getCurrentAccount(c *gin.Context) (*dto.AccountDTO, error) {

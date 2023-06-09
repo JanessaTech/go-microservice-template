@@ -1,5 +1,7 @@
 package handlers
 
+import "github.com/gin-gonic/gin"
+
 type ResponseMessage string
 
 const (
@@ -19,4 +21,24 @@ func NewResponse(statusCode int, message ResponseMessage, data interface{}) *Res
 		Message:    message,
 		Details:    data,
 	}
+}
+
+func execute(c *gin.Context, f func(c *gin.Context) *Response) {
+	ctx := c.Request.Context()
+
+	doneChan := make(chan *Response)
+	go func() {
+		doneChan <- f(c)
+	}()
+
+	select {
+	case <-ctx.Done():
+		// no defined yet
+	case res := <-doneChan:
+		handleResponse(c, res)
+	}
+}
+
+func handleResponse(c *gin.Context, r *Response) {
+	c.JSON(r.StatusCode, r)
 }

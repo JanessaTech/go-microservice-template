@@ -73,8 +73,10 @@ In body tab, choose raw radio box and select JSON from dropdown list. Input json
 You will get a response like below:
 ```
 {
-    "savedAccDto": {
-        "id": 0,
+    "code": 200,
+    "message": "success",
+    "details": {
+        "id": 1,
         "username": "JanessaTech1",
         "password": ""
     }
@@ -93,9 +95,12 @@ In body tab, choose raw radio box and select JSON from dropdown list. Input json
 You will get a response like below:
 ```
 {
-    "jwt": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2ODYwNTE5NTQsImlkIjowfQ.aozM7M3QSUXMBWl20IGg30Nph8FY9966KehVu_76jW8"
+    "code": 200,
+    "message": "success",
+    "details": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2ODYyODA5NzIsImlkIjoxfQ.gnJ6BkFKgW1mcyw6ypssXMztkAs-M_9XM8maLEGtodM"
 }
 ```
+jwt code is contained in details in the response. We will use it as Authorization later on
 ### 3.Check current user
 In postman, run the url below with GET method:
 http://127.0.0.1:8080/api/account/me
@@ -103,8 +108,10 @@ In Authorization tab, select Bearer Token as Type, input the jwt value returned 
 You will receive a response like below:
 ```
 {
-    "current account": {
-        "id": 0,
+    "code": 200,
+    "message": "success",
+    "details": {
+        "id": 1,
         "username": "JanessaTech1",
         "password": ""
     }
@@ -116,22 +123,35 @@ You will receive a reponse like below if token is not correct
     "error": "anthentication is failed"
 }
 ```
-### Product operations(CURD)
+### Product operations(CRUD)
 #### Add a new product
 In postman, run the url below with POST method:
 http://127.0.0.1:8080/api/products
 In Authorization tab, select Bearer Token as Type, input the jwt value returned above as token
 Input json content as body as below:
 ```
-DDD
+{
+    "name" : "product1"
+}
 ```
 You will receive a response like below:
 ```
-DDD
+{
+    "code": 200,
+    "message": "success",
+    "details": {
+        "id": 1,
+        "name": "product1",
+        "createdAt": "2023-06-09T11:11:39.098+08:00",
+        "updatedAt": "2023-06-09T11:11:39.098+08:00"
+    }
+}
 ```
 You will receive a reponse like below if token is not correct
 ```
-DDD
+{
+    "error": "anthentication is failed"
+}
 ```
 
 #### view all products
@@ -140,11 +160,24 @@ http://127.0.0.1:8080/api/products
 In Authorization tab, select Bearer Token as Type, input the jwt value returned above as token
 You will receive a response like below:
 ```
-DDD
+{
+    "code": 200,
+    "message": "success",
+    "details": [
+        {
+            "id": 1,
+            "name": "product1",
+            "createdAt": "2023-06-09T11:11:39+08:00",
+            "updatedAt": "2023-06-09T11:11:39+08:00"
+        }
+    ]
+}
 ```
 You will receive a reponse like below if token is not correct
 ```
-DDD
+{
+    "error": "anthentication is failed"
+}
 ```
 
 #### delete a product
@@ -153,10 +186,16 @@ http://127.0.0.1:8080/api/products/1
 In Authorization tab, select Bearer Token as Type, input the jwt value returned above as token
 You will receive a response like below:
 ```
-DDD
+{
+    "code": 200,
+    "message": "success",
+    "details": null
+}
 ```
 You will receive a reponse like below if token is not correct
 ```
-DDD
+{
+    "error": "anthentication is failed"
+}
 ```
 
