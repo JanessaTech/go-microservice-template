@@ -59,7 +59,10 @@ func StartApplication(configFile string) {
 	}
 
 	app := fx.New(
-		fx.Supply(logging.GetLogger(config), config),
+		fx.Supply( // set initial variables needed by funcs defined in fx.Provide()
+			logging.GetLogger(config),
+			config,
+		),
 		fx.Invoke(printBanner),
 		fx.WithLogger(func(logger *zap.Logger) fxevent.Logger {
 			return &fxevent.ZapLogger{Logger: logger.Named("JanessaTech Template")}
@@ -68,9 +71,11 @@ func StartApplication(configFile string) {
 			Server,
 			database.NewDataBase,
 			repositories.NewAccountDB,
+			repositories.NewProductDB,
 			services.NewAccountService,
+			services.NewProductService,
 			handlers.NewAccountHandler,
-			handlers.NewProductController,
+			handlers.NewProductHandler,
 		),
 		fx.Invoke(
 			func(*gin.Engine) {},

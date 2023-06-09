@@ -2,51 +2,79 @@ package handlers
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/hi-supergirl/go-microservice-template/handlers/services"
+	"github.com/hi-supergirl/go-microservice-template/handlers/services/dto"
+	"github.com/hi-supergirl/go-microservice-template/logging"
+	"github.com/hi-supergirl/go-microservice-template/middlewares"
 	"go.uber.org/zap"
 )
 
 type ProductHandler interface {
 	GetAll(c *gin.Context)
-	FindById(c *gin.Context)
 	Add(c *gin.Context)
-	Update(c *gin.Context)
 	Delete(c *gin.Context)
 }
 
 type productHandler struct {
+	productService services.ProductService
 }
 
-func NewProductController(logger *zap.Logger) ProductHandler {
-	return &productHandler{}
+func NewProductHandler(logger *zap.Logger, productService services.ProductService) ProductHandler {
+	return &productHandler{productService: productService}
 }
 
-func (pc *productHandler) GetAll(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"ProductHandler": "GetAll"})
-}
-func (pc *productHandler) FindById(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"ProductHandler": "FindById"})
-
-}
-
-func (pc *productHandler) Add(c *gin.Context) {
-
-}
-
-func (pc *productHandler) Update(c *gin.Context) {
-
-}
-func (pc *productHandler) Delete(c *gin.Context) {
-
+func (ph *productHandler) GetAll(c *gin.Context) {
+	logger := logging.FromContext(c)
+	logger.Infow("[productHandler]", "GetAll", "")
+	products, err := ph.productService.GetAll(c.Request.Context())
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"success": products})
 }
 
-func ProductRoute(pc ProductHandler, logger *zap.Logger, c *gin.Engine) {
+func (ph *productHandler) Add(c *gin.Context) {
+	logger := logging.FromContext(c)
+	logger.Infow("[productHandler]", "Add", "")
+	var productDtO dto.ProductDTO
+	if err := c.ShouldBindJSON(&productDtO); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	savedProduct, err := ph.productService.Add(c.Request.Context(), productDtO)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"success": savedProduct})
+}
+
+func (ph *productHandler) Delete(c *gin.Context) {
+	logger := logging.FromContext(c)
+	id := StringToUint(c.Param("id"))
+	logger.Infow("[productHandler]", "Delete id = ", id)
+	err := ph.productService.Delete(c.Request.Context(), id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"success": ""})
+}
+
+func StringToUint(s string) uint {
+	i, _ := strconv.Atoi(s)
+	return uint(i)
+}
+
+func ProductRoute(ph ProductHandler, logger *zap.Logger, c *gin.Engine) {
 	api := c.Group("/api")
-
-	api.GET("/products", pc.GetAll)
-	api.GET("/products/{id}", pc.FindById)
-	api.POST("/products", pc.Add)
-	api.PUT("/products", pc.Update)
-	api.DELETE("/products/{id}", pc.Delete)
+	api.Use(middlewares.JwtTokenMiddleWare(), middlewares.RequestTraceMiddleWare())
+	api.GET("/products", ph.GetAll)
+	api.POST("/products", ph.Add)
+	api.DELETE("/products/:id", ph.Delete)
 }

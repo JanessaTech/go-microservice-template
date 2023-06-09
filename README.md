@@ -117,3 +117,46 @@ You will receive a reponse like below if token is not correct
 }
 ```
 ### Product operations(CURD)
+#### Add a new product
+In postman, run the url below with POST method:
+http://127.0.0.1:8080/api/products
+In Authorization tab, select Bearer Token as Type, input the jwt value returned above as token
+Input json content as body as below:
+```
+DDD
+```
+You will receive a response like below:
+```
+DDD
+```
+You will receive a reponse like below if token is not correct
+```
+DDD
+```
+
+#### view all products
+In postman, run the url below with GET method:
+http://127.0.0.1:8080/api/products
+In Authorization tab, select Bearer Token as Type, input the jwt value returned above as token
+You will receive a response like below:
+```
+DDD
+```
+You will receive a reponse like below if token is not correct
+```
+DDD
+```
+
+#### delete a product
+In postman, run the url below with DELETE method:
+http://127.0.0.1:8080/api/products/1
+In Authorization tab, select Bearer Token as Type, input the jwt value returned above as token
+You will receive a response like below:
+```
+DDD
+```
+You will receive a reponse like below if token is not correct
+```
+DDD
+```
+

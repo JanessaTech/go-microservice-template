@@ -16,14 +16,11 @@ type AccountDB interface {
 }
 
 type accountDB struct {
-	db       *gorm.DB
-	accounts map[string]*model.Account
+	db *gorm.DB
 }
 
 func NewAccountDB(logger *zap.Logger, db *gorm.DB) AccountDB {
-	// initiate accounts by test data
-	accounts := make(map[string]*model.Account)
-	return &accountDB{db: db, accounts: accounts}
+	return &accountDB{db: db}
 }
 
 func (accountDB *accountDB) GetById(ctx context.Context, id uint) (*model.Account, error) {

@@ -44,6 +44,7 @@ func (ah *accountHandler) Register(c *gin.Context) {
 	savedAccDto, err := ah.accountService.Save(c.Request.Context(), accDto)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 	savedAccDto.Password = ""
 
@@ -61,6 +62,7 @@ func (ah *accountHandler) Login(c *gin.Context) {
 	accDto, err := ah.accountService.GetByName(c.Request.Context(), auth.UserName)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 	if err := accDto.ValidatePassword(auth.Password); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
