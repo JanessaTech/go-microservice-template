@@ -46,7 +46,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&configFile, "conf", "c", "./config/properties.json", "config file path")
 }
 
-// Take the code references in the following order if if you want to write codes from scratch,
+// Take the code references in the following order if you want to implement the same template by your own from scratch,
 // 1. https://github.com/hi-supergirl/go-micro-service-example/tree/master/dive-in-cobra
 // 2. https://github.com/hi-supergirl/go-learning-fx/tree/master/IntegrateFxWithGin-3
 // 3. https://github.com/hi-supergirl/go-learning-fx/tree/master/IntegrateFxWithZapLogger4
